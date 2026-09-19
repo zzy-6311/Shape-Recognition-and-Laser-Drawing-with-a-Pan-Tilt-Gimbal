@@ -1,0 +1,40 @@
+# ===========================================================================
+#  diansai-xuanba —— 依赖清单
+# ===========================================================================
+#
+#  安装：
+#      PC（只调视觉）       pip install -r requirements.txt
+#      树莓派（完整功能）    pip3 install -r requirements.txt
+#
+#  ⚠️ OpenCV 锁在 4.x
+#     大版本升级可能改变二值化 / 阈值 / 轮廓逼近的行为，进而改变识别结果
+#     （见 README 风险 R11）。升级前请先用 my-cv-one.py 跑一遍 sucai/*.jpg
+#     做回归，确认图形仍能被正确识别。
+#
+#     树莓派 32 位系统上若 pip 找不到预编译 wheel，可改用系统包：
+#         sudo apt install python3-opencv
+#     代价是无法用本文件锁定版本。
+#
+#  ⚠️ gpiozero 带环境标记，只在 Linux 上安装
+#     非 Linux 平台装了也没有 GPIO 可用，而 work-pi.py 检测不到 GPIO 时会
+#     直接退出（见 README 风险 R5）。在 PC 上调视觉只需前两项。
+#
+# ===========================================================================
+
+
+# --- 通用：所有 .py 都需要 ---------------------------------------------------
+numpy>=1.23
+opencv-python>=4.5,<5
+
+
+# --- 串口通信：work-pi.py 控制二维云台电机（Modbus-RTU）----------------------
+#     work-pi.py 在文件顶部无条件 import serial，因此跑主程序必须装。
+#     只调视觉（my-cv.py / my-cv-one.py / calibrate.py）可以不装。
+pyserial>=3.5
+
+
+# --- 树莓派专用：激光继电器 / 数码管 / 按钮 -----------------------------------
+#     若运行时报 "no pin library found"，补装底层引脚库：
+#         sudo apt install python3-lgpio        # Bookworm 及以上
+#         sudo apt install python3-rpi.gpio     # Bullseye 及以下
+gpiozero>=1.6 ; sys_platform == "linux"
